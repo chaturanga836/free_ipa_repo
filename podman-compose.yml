@@ -12,14 +12,18 @@ services:
       - "443:443"
     volumes:
       - freeipa-data:/data:Z
-      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+      - "/sys/fs/cgroup:/sys/fs/cgroup:rw"
     tmpfs:
       - /run
       - /tmp
-    command: >
-      -U --realm=PACKOPS.LOCAL --domain=packops.local
-      --ds-password=Admin@123 --admin-password=Admin@123
-      --no-host-dns --unattended
+    command:
+      - -U
+      - --realm=PACKOPS.LOCAL
+      - --domain=packops.local
+      - --ds-password=Admin@123
+      - --admin-password=Admin@123
+      - --no-host-dns
+      - --unattended
 
 volumes:
   freeipa-data:
