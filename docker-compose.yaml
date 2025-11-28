@@ -3,15 +3,19 @@ services:
     image: freeipa/freeipa-server:rocky-9
     container_name: freeipa-server
     hostname: ec2-65-0-150-75.ap-south-1.compute.amazonaws.com
+    privileged: true
     environment:
       IPA_SERVER_IP: "65.0.150.75"
       IPA_SERVER_HOSTNAME: "ec2-65-0-150-75.ap-south-1.compute.amazonaws.com"
+      IPA_ADMIN_PASSWORD: "Admin@123"
       PASSWORD: "Admin@123"
     ports:
-      - "389:389"     # LDAP
-      - "636:636"     # LDAPS
-      - "88:88"       # Kerberos
-      - "464:464"     # kadmin
+      - "389:389"
+      - "636:636"
+      - "88:88"
+      - "88:88/udp"
+      - "464:464"
+      - "464:464/udp"    # kadmin
     volumes:
       - freeipa-data:/data:Z
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
