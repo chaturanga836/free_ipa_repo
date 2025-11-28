@@ -10,7 +10,6 @@ services:
       IPA_SERVER_HOSTNAME: ec2-65-0-150-75.ap-south-1.compute.amazonaws.com
     tty: true
     stdin_open: true
-    cgroupns_mode: host
     # pid: host
     cap_add:
       - NET_ADMIN
