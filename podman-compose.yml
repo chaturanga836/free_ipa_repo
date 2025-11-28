@@ -2,7 +2,7 @@ version: "3"
 services:
   freeipa:
     image: docker.io/freeipa/freeipa-server:rocky-9
-    hostname: ipa.packops.local
+    hostname: ec2-65-0-150-75.ap-south-1.compute.amazonaws.com
     ports:
       - "389:389"
       - "636:636"
