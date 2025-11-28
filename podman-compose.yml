@@ -1,0 +1,25 @@
+version: "3"
+services:
+  freeipa:
+    image: docker.io/freeipa/freeipa-server:rocky-9
+    hostname: ipa.packops.local
+    ports:
+      - "389:389"
+      - "636:636"
+      - "88:88"
+      - "464:464"
+      - "80:80"
+      - "443:443"
+    volumes:
+      - freeipa-data:/data:Z
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    tmpfs:
+      - /run
+      - /tmp
+    command: >
+      -U --realm=PACKOPS.LOCAL --domain=packops.local
+      --ds-password=Admin@123 --admin-password=Admin@123
+      --no-host-dns --unattended
+
+volumes:
+  freeipa-data:
