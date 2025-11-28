@@ -11,7 +11,7 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - freeipa-data:/data:Z
+      - freeipa-data:/data
       - "/sys/fs/cgroup:/sys/fs/cgroup:rw"
     tmpfs:
       - /run
