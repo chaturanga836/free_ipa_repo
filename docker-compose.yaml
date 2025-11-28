@@ -1,7 +1,7 @@
 
 services:
   freeipa-server:
-    image: freeipa/freeipa-server:centos-9-stream
+    image: freeipa/freeipa-server:fedora-rawhide
     # restart: unless-stopped
     hostname: ec2-65-0-150-75.ap-south-1.compute.amazonaws.com
     container_name: freeipa-server
