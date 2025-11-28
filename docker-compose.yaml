@@ -3,33 +3,28 @@ services:
     image: freeipa/freeipa-server:rocky-9
     container_name: freeipa-server
     hostname: ec2-65-0-150-75.ap-south-1.compute.amazonaws.com
+    privileged: true                # solves systemd/cgroup issues
+    cap_add:
+      - NET_ADMIN
+    security_opt:
+      - seccomp:unconfined
     environment:
       IPA_SERVER_IP: "65.0.150.75"
       IPA_SERVER_HOSTNAME: "ec2-65-0-150-75.ap-south-1.compute.amazonaws.com"
-      IPA_ADMIN_PASSWORD: "Admin@123"
       PASSWORD: "Admin@123"
+    tty: true
+    stdin_open: true
+    volumes:
+      - freeipa-data:/data:Z
+      - /etc/localtime:/etc/localtime:ro
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    sysctls:
+      - net.ipv6.conf.all.disable_ipv6=0
     ports:
       - "389:389"
       - "636:636"
       - "88:88"
-      - "88:88/udp"
       - "464:464"
-      - "464:464/udp"
-    volumes:
-      - freeipa-data:/data:Z
-      - type: bind
-        source: /sys/fs/cgroup
-        target: /sys/fs/cgroup
-    tmpfs:
-      - /run
-      - /tmp
-    extra_hosts:
-      - "ec2-65-0-150-75.ap-south-1.compute.amazonaws.com:65.0.150.75"
-    sysctls:
-      - net.ipv6.conf.all.disable_ipv6=0
-    tty: true
-    stdin_open: true
-    privileged: true
     restart: unless-stopped
 
 volumes:
