@@ -2,17 +2,27 @@ version: '3.8'
 
 services:
   freeipa-server:
-    image: freeipa/freeipa-server:latest
+    image: freeipa/freeipa-server:rocky-9
     container_name: freeipa-server
     hostname: ec2-65-0-150-75.ap-south-1.compute.amazonaws.com
     environment:
-      IPA_SERVER_IP: 65-0-150-75
-      IPA_SERVER_HOSTNAME: ec2-65-0-150-75.ap-south-1.compute.amazonaws.com
-      PASSWORD: Admin@123
+      IPA_SERVER_IP: "65.0.150.75"
+      IPA_SERVER_HOSTNAME: "ec2-65-0-150-75.ap-south-1.compute.amazonaws.com"
+      PASSWORD: "Admin@123"
     ports:
       - "389:389"     # LDAP
       - "636:636"     # LDAPS
       - "88:88"       # Kerberos
-      - "464:464"     # Kerberos kadmin
+      - "464:464"     # kadmin
       - "443:443"     # Web UI
+    volumes:
+      - freeipa-data:/data:Z
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    extra_hosts:
+      - "ec2-65-0-150-75.ap-south-1.compute.amazonaws.com:65.0.150.75"
+    sysctls:
+      - net.ipv6.conf.all.disable_ipv6=0
     restart: unless-stopped
+
+volumes:
+  freeipa-data:
