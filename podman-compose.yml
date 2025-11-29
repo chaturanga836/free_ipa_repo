@@ -23,7 +23,7 @@ services:
       - --ds-password=Admin@123
       - --admin-password=Admin@123
       - --hostname=ec2-65-0-150-75.ap-south-1.compute.amazonaws.com
-      - --ip-address=65.0.150.75
+      - --ip-address=10.88.0.10
       - --unattended
     extra_hosts:
     - "ec2-65-0-150-75.ap-south-1.compute.amazonaws.com:65.0.150.75"
