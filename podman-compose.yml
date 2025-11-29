@@ -16,15 +16,7 @@ services:
     tmpfs:
       - /run
       - /tmp
-    command:
-      - -U
-      - --realm=PACKOPS.LOCAL
-      - --domain=packops.local
-      - --setup-dns
-      - --no-host-dns
-      - --forwarder=8.8.8.8
-      - --ds-password=Admin@123
-      - --admin-password=Admin@123
+      
     extra_hosts:
     - "ec2-65-0-150-75.ap-south-1.compute.amazonaws.com:65.0.150.75"
 
