@@ -22,7 +22,8 @@ services:
       - --domain=packops.local
       - --ds-password=Admin@123
       - --admin-password=Admin@123
-      - --no-host-dns
+      - --hostname=ec2-65-0-150-75.ap-south-1.compute.amazonaws.com
+      - --ip-address=65.0.150.75
       - --unattended
 
 volumes:
