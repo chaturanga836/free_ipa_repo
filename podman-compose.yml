@@ -2,7 +2,7 @@ version: "3"
 services:
   freeipa:
     image: docker.io/freeipa/freeipa-server:rocky-9
-    hostname: ec2-65-0-150-75.ap-south-1.compute.amazonaws.com
+    hostname: ipa.packops.local
     # CRITICAL FIX: Forces the container to use its own DNS server (127.0.0.1)
     dns:
       - 127.0.0.1
@@ -32,10 +32,10 @@ services:
       - -U
       - --realm=PACKOPS.LOCAL
       - --domain=packops.local
-      - --hostname=ec2-65-0-150-75.ap-south-1.compute.amazonaws.com
       - --unattended
-      - --no-ntp # Added to avoid NTP conflicts with the host system
+      - --no-ntp # Avoids potential NTP sync issues with the host
     extra_hosts:
+      - "ipa.packops.local:65.0.150.75"
       - "ec2-65-0-150-75.ap-south-1.compute.amazonaws.com:65.0.150.75"
 
 volumes:
