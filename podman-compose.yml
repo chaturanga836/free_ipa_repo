@@ -5,7 +5,7 @@ services:
     hostname: ipa.packops.local
     # CRITICAL FIX: Forces the container to use its own DNS server (127.0.0.1)
     dns:
-      - 127.0.0.1
+      - 127.0.0.11
     privileged: true # Required for systemd inside the container
     environment:
       # Optional: Set IPA_SERVER_IP to your public IP for external DNS registration
