@@ -3,13 +3,12 @@ services:
   freeipa:
     image: docker.io/freeipa/freeipa-server:rocky-9
     hostname: ipa.packops.local
-    # CRITICAL FIX: Forces the container to use its own DNS server (127.0.0.1)
     dns:
-      - 127.0.0.11
-    privileged: true # Required for systemd inside the container
+      - 127.0.0.1
+    privileged: true
+    networks:
+      - podman
     environment:
-      # Optional: Set IPA_SERVER_IP to your public IP for external DNS registration
-      # - IPA_SERVER_IP=65.0.150.75 
       - DS_PASSWORD=Admin@123
       - ADMIN_PASSWORD=Admin@123
     ports:
@@ -19,8 +18,8 @@ services:
       - "464:464"
       - "80:80"
       - "443:443"
-      - "53:53/udp" # UDP for DNS is essential; ensure this is added
-      - "123:123/udp" # UDP for NTP is highly recommended
+      - "53:53/udp"
+      - "123:123/udp"
     volumes:
       - freeipa-data:/data
       - "/sys/fs/cgroup:/sys/fs/cgroup:rw"
@@ -28,15 +27,16 @@ services:
       - /run
       - /tmp
     command:
-      # Use the image's default command to install FreeIPA (ipa-server-install is default)
       - -U
       - --realm=PACKOPS.LOCAL
       - --domain=packops.local
       - --unattended
-      - --no-ntp # Avoids potential NTP sync issues with the host
-    extra_hosts:
-      - "ipa.packops.local:65.0.150.75"
-      - "ec2-65-0-150-75.ap-south-1.compute.amazonaws.com:65.0.150.75"
+      - --setup-dns
+      - --auto-forwarders
 
 volumes:
   freeipa-data:
+
+networks:
+  podman:
+    external: true
