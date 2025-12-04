@@ -3,23 +3,11 @@ services:
   freeipa:
     image: docker.io/freeipa/freeipa-server:rocky-9
     hostname: ipa.packops.local
-    dns:
-      - 127.0.0.1
+    network_mode: "host"
     privileged: true
-    networks:
-      - podman
     environment:
       - DS_PASSWORD=Admin@123
       - ADMIN_PASSWORD=Admin@123
-    ports:
-      - "389:389"
-      - "636:636"
-      - "88:88"
-      - "464:464"
-      - "80:80"
-      - "443:443"
-      - "53:53/udp"
-      - "123:123/udp"
     volumes:
       - freeipa-data:/data
       - "/sys/fs/cgroup:/sys/fs/cgroup:rw"
@@ -31,12 +19,6 @@ services:
       - --realm=PACKOPS.LOCAL
       - --domain=packops.local
       - --unattended
-      - --setup-dns
-      - --auto-forwarders
 
 volumes:
   freeipa-data:
-
-networks:
-  podman:
-    external: true
