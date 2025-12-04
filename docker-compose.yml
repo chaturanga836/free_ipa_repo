@@ -1,0 +1,24 @@
+version: "3.8"
+
+services:
+  freeipa:
+    image: freeipa/freeipa-server:rocky-9
+    container_name: freeipa-server
+    hostname: ipa.packops.local
+    network_mode: "host"
+    privileged: true
+    environment:
+      - DS_PASSWORD=Admin@123
+      - ADMIN_PASSWORD=Admin@123
+    volumes:
+      - freeipa-data:/data
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    command:
+      - -U
+      - --realm=PACKOPS.LOCAL
+      - --domain=packops.local
+      - --unattended
+
+volumes:
+  freeipa-data:
+    driver: local
