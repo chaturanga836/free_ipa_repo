@@ -1,5 +1,6 @@
 services:
-  freeipa:         # ← apply it here
+  freeipa:
+    # Service definition start
     image: freeipa/freeipa-server:rocky-9
     container_name: freeipa-server
     restart: unless-stopped
@@ -9,6 +10,7 @@ services:
       - /run:size=100m
       - /tmp:size=500m
     volumes:
+      # This line refers to the volume defined below
       - freeipa-data:/data
       - /sys/fs/cgroup:/sys/fs/cgroup:rw
     sysctls:
@@ -18,15 +20,22 @@ services:
     ports:
       - "53:53/tcp"
       - "53:53/udp"
-      - "80:80"            
+      - "80:80"
       - "443:443"
-      - "389:389"          
+      - "389:389"
       - "636:636"
-      - "88:88"            
+      - "88:88"
       - "88:88/udp"
-      - "464:464"          
+      - "464:464"
       - "464:464/udp"
       - "123:123/udp"
     command: >
       -U --realm=PACKOPS.LOCAL --domain=packops.local
       --unattended --no-ntp --setup-dns --no-forwarders --auto-reverse
+    # Service definition end
+
+# 🚨 ADD THIS SECTION HERE 🚨
+volumes:
+  freeipa-data:
+    # You can optionally add a driver or external setting here, 
+    # but defining it by name is sufficient for a default local volume.
