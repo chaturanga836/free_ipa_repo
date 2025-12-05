@@ -1,57 +1,34 @@
+version: '3.8'
+x-docker-cgroup: &cgroup
+  cgroup_parent: docker.slice
+  cgroupns_mode: host   # ← this forces cgroup v1
+
 services:
   freeipa:
+    <<: *cgroup           # ← apply it here
     image: freeipa/freeipa-server:rocky-9
     container_name: freeipa-server
+    restart: unless-stopped
     hostname: ipa.packops.local
-    privileged: true  # Keep for cgroup/hostnamectl; avoid if possible
-    userns_mode: "host"
-    read_only: true  # Add for isolation
-    sysctls:
-      - net.ipv6.conf.lo.disable_ipv6=0  # Fix IPv6/hostname issues
-    networks:
-      freeipa-net:
-        ipv4_address: 172.20.0.2  # Static IP in network for consistency
-    environment:
-      - PASSWORD=Admin@123  # Sets both ADMIN_PASSWORD and DS_PASSWORD
-      - IPA_SERVER_IP=172.31.6.95  # Your EC2 private IP; adjust as needed
-      - DEBUG_NO_EXIT=1  # Temp: Keep container alive on error
-      - DEBUG_TRACE=1    # Temp: Enable tracing
+    privileged: true
+    tmpfs:
+      - /run:size=100m
+      - /tmp:size=500m
     volumes:
       - freeipa-data:/data
-      - /sys/fs/cgroup:/sys/fs/cgroup:ro  # ro for safety
-    tmpfs:
-      - /run
-      - /tmp
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    sysctls:
+      - net.ipv6.conf.lo.disable_ipv6=0
+    environment:
+      PASSWORD: Admin@123
     ports:
-      # HTTP/HTTPS
-      - "80:80"
-      - "443:443"
-      # LDAP/LDAPS
-      - "389:389"
-      - "636:636"
-      # Kerberos
-      - "88:88"
-      - "88:88/udp"
-      - "464:464"
-      - "464:464/udp"
-      # DNS (if using --setup-dns later)
-      - "53:53"
+      - "53:53/tcp"
       - "53:53/udp"
-      # NTP
+      - "80:80"            - "443:443"
+      - "389:389"          - "636:636"
+      - "88:88"            - "88:88/udp"
+      - "464:464"          - "464:464/udp"
       - "123:123/udp"
-    command:
-      - -U
-      - --realm=PACKOPS.LOCAL
-      - --domain=packops.local
-      - --unattended
-      - --no-ntp  # Skip NTP to avoid chronyd failures
-
-networks:
-  freeipa-net:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 172.20.0.0/16  # Custom subnet to avoid conflicts
-
-volumes:
-  freeipa-data:
+    command: >
+      -U --realm=PACKOPS.LOCAL --domain=packops.local
+      --unattended --no-ntp --setup-dns --no-forwarders --auto-reverse
