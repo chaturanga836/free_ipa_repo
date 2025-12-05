@@ -1,6 +1,5 @@
 services:
-  freeipa:
-    <<: *cgroup           # ← apply it here
+  freeipa:         # ← apply it here
     image: freeipa/freeipa-server:rocky-9
     container_name: freeipa-server
     restart: unless-stopped
