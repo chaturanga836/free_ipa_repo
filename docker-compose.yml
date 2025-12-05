@@ -3,23 +3,55 @@ services:
     image: freeipa/freeipa-server:rocky-9
     container_name: freeipa-server
     hostname: ipa.packops.local
-    privileged: true
+    privileged: true  # Keep for cgroup/hostnamectl; avoid if possible
     userns_mode: "host"
+    read_only: true  # Add for isolation
+    sysctls:
+      - net.ipv6.conf.lo.disable_ipv6=0  # Fix IPv6/hostname issues
     networks:
-      - freeipa-net
+      freeipa-net:
+        ipv4_address: 172.20.0.2  # Static IP in network for consistency
     environment:
-      - DS_PASSWORD=Admin@123
-      - ADMIN_PASSWORD=Admin@123
+      - PASSWORD=Admin@123  # Sets both ADMIN_PASSWORD and DS_PASSWORD
+      - IPA_SERVER_IP=172.31.6.95  # Your EC2 private IP; adjust as needed
+      - DEBUG_NO_EXIT=1  # Temp: Keep container alive on error
+      - DEBUG_TRACE=1    # Temp: Enable tracing
     volumes:
       - freeipa-data:/data
-      - /sys/fs/cgroup:/sys/fs/cgroup
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro  # ro for safety
+    tmpfs:
+      - /run
+      - /tmp
+    ports:
+      # HTTP/HTTPS
+      - "80:80"
+      - "443:443"
+      # LDAP/LDAPS
+      - "389:389"
+      - "636:636"
+      # Kerberos
+      - "88:88"
+      - "88:88/udp"
+      - "464:464"
+      - "464:464/udp"
+      # DNS (if using --setup-dns later)
+      - "53:53"
+      - "53:53/udp"
+      # NTP
+      - "123:123/udp"
     command:
       - -U
       - --realm=PACKOPS.LOCAL
       - --domain=packops.local
       - --unattended
+      - --no-ntp  # Skip NTP to avoid chronyd failures
 
 networks:
   freeipa-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16  # Custom subnet to avoid conflicts
+
 volumes:
   freeipa-data:
