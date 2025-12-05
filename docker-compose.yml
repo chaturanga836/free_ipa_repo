@@ -12,7 +12,7 @@ services:
       - ADMIN_PASSWORD=Admin@123
     volumes:
       - freeipa-data:/data
-      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - /sys/fs/cgroup:/sys/fs/cgroup
     command:
       - -U
       - --realm=PACKOPS.LOCAL
