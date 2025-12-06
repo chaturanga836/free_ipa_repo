@@ -34,8 +34,8 @@ services:
       -U
       --realm=PACKOPS.LOCAL
       --domain=packops.local
-      --ds-password=${PASSWORD}
-      --admin-password=${PASSWORD}
+      --ds-password=Admin@123
+      --admin-password=Admin@123
       --unattended
       --no-ntp
       --setup-dns
