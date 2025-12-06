@@ -1,20 +1,20 @@
-# docker-compose.yml  ←  copy-paste this exactly
 services:
   freeipa:
-    image: freeipa/freeipa-server:almalinux-9          # exactly the one in the video
+    image: freeipa/freeipa-server:almalinux-9
     container_name: freeipa
-    hostname: ipa.packops.local                        # change only this line
-    read_only: true                                    # exactly like the video
+    hostname: ipa.packops.local
+    read_only: true
     tmpfs:
       - /run
-      - /tmp                                           # Docker creates them automatically
+      - /tmp
     volumes:
-      - ipa-data:/data:Z                               # :Z is important for SELinux
+      - ipa-data:/data:Z
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw          # ← THIS LINE WAS MISSING
     sysctls:
-      - net.ipv6.conf.all.disable_ipv6=0               # exactly like the video
+      - net.ipv6.conf.all.disable_ipv6=0
     environment:
       - PASSWORD=Admin@123
-      - IPA_SERVER_IP=172.31.6.95                      # ← YOUR EC2 EC2 private IP
+      - IPA_SERVER_IP=172.31.6.95
     ports:
       - "53:53/tcp"
       - "53:53/udp"
