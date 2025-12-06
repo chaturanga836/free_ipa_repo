@@ -14,7 +14,8 @@ services:
     environment:
       - PASSWORD=Admin@123                     # ← this answers ALL password prompts
       - IPA_SERVER_HOSTNAME=ipa.packops.local   # ← answers the hostname question
-      - IPA_SERVER_IP=172.31.6.95               # your EC2 private IP
+      - IPA_SERVER_IP=172.31.6.95 
+      - REALM=PACKOPS.LOCAL              # your EC2 private IP
     ports:
       - "80:80"
       - "443:443"
