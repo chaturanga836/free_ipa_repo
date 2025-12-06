@@ -15,7 +15,8 @@ services:
       - PASSWORD=Admin@123                     # ← this answers ALL password prompts
       - IPA_SERVER_HOSTNAME=ec2-65-0-150-75.ap-south-1.compute.amazonaws.com
       - DOMAIN=ap-south-1.compute.amazonaws.com
-      - REALM=AP-SOUTH-1.COMPUTE.AMAZONAWS.COM             # your EC2 private IP
+      - REALM=AP-SOUTH-1.COMPUTE.AMAZONAWS.COM
+      - IPA_SERVER_INSTALL_OPTS=-U --no-dns            # your EC2 private IP
     ports:
       - "80:80"
       - "443:443"
