@@ -12,10 +12,12 @@ services:
     sysctls:
       - net.ipv6.conf.all.disable_ipv6=0
     environment:
-      - PASSWORD=Admin@123                     # ← this answers ALL password prompts
-      - IPA_SERVER_HOSTNAME=ipa.packops.local   # ← answers the hostname question
-      - IPA_SERVER_IP=172.31.6.95 
-      - REALM=PACKOPS.LOCAL              # your EC2 private IP
+      - PASSWORD=Admin@123
+      - IPA_SERVER_HOSTNAME=ipa.packops.local
+      - IPA_SERVER_IP=172.31.6.95
+      - REALM=PACKOPS.LOCAL
+      - DOMAIN=packops.local
+      - IPA_SERVER_INSTALL_OPTS=-U --no-dns              # your EC2 private IP
     ports:
       - "80:80"
       - "443:443"
@@ -28,7 +30,7 @@ services:
       - "53:53"
       - "53:53/udp"
       - "123:123/udp"
-    restart: unless-stopped
+    # restart: unless-stopped
 
 volumes:
   ipa-data:
