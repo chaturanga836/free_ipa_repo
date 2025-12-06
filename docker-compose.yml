@@ -39,6 +39,7 @@ services:
       --setup-dns
       --no-forwarders
       --auto-reverse
+      --no-client
 
 volumes:
   freeipa-data:
