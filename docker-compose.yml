@@ -1,34 +1,33 @@
 services:
   freeipa:
-    image: freeipa/freeipa-server:fedora-40
+    image: freeipa/freeipa-server:almalinux-9  # From video—stable RHEL 9 clone
     container_name: freeipa-server
-    restart: unless-stopped
-    hostname: ipa.packops.local
-    privileged: true
-    tmpfs:
-      - /run:size=100m
-      - /tmp:size=500m
+    hostname: ipa.packops.local  # From your original
+    read_only: true  # From video—for security (tmpfs auto-handles /run, /tmp)
+    privileged: true  # Required for systemd
     volumes:
-      - freeipa-data:/data
-      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+      - freeipa-data:/data:Z  # :Z for SELinux relabeling (video uses it)
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro  # ro safe on your cgroup v1
+      - /etc/ssl/certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro  # Safety for SSL (your confirmed file)
     sysctls:
-      - net.ipv6.conf.lo.disable_ipv6=0
+      - net.ipv6.conf.all.disable_ipv6=0  # From video—broader IPv6 disable
     environment:
-      - PASSWORD=Admin@123
+      - PASSWORD=Admin@123  # Sets admin/DS passwords
+      - IPA_SERVER_IP=172.31.6.95  # Your EC2 private IP (from video)
     ports:
+      # From video (matches yours)
       - "53:53/tcp"
       - "53:53/udp"
       - "80:80"
       - "443:443"
       - "389:389"
       - "636:636"
-      - "88:88"
+      - "88:88/tcp"
       - "88:88/udp"
-      - "464:464"
+      - "464:464/tcp"
       - "464:464/udp"
       - "123:123/udp"
-    command:
-      - --no-client   # this is the only flag that actually works on fedora-40
+    restart: always  # From video
 
 volumes:
-  freeipa-data:
+  freeipa-data:  # Named volume (auto-created, as in video)
