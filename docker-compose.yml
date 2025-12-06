@@ -11,12 +11,24 @@ services:
       - ipa-data:/data:Z
     sysctls:
       - net.ipv6.conf.all.disable_ipv6=0
+    command: >
+      -U
+      --realm=AP-SOUTH-1.COMPUTE.AMAZONAWS.COM
+      --domain=ap-south-1.compute.amazonaws.com
+      --ds-password=Admin@123
+      --admin-password=Admin@123
+      --unattended
+      --no-ntp
+      --setup-dns
+      --no-forwarders
+      --auto-reverse
+      --no-client
     environment:
-      - PASSWORD=Admin@123                     # ← this answers ALL password prompts
+    #   - PASSWORD=Admin@123                     # ← this answers ALL password prompts
       - IPA_SERVER_HOSTNAME=ec2-65-0-150-75.ap-south-1.compute.amazonaws.com
-      - DOMAIN=ap-south-1.compute.amazonaws.com
-      - REALM=AP-SOUTH-1.COMPUTE.AMAZONAWS.COM
-      - IPA_SERVER_INSTALL_OPTS=-U --no-dns            # your EC2 private IP
+    #   - DOMAIN=ap-south-1.compute.amazonaws.com
+    #   - REALM=AP-SOUTH-1.COMPUTE.AMAZONAWS.COM
+    #   - IPA_SERVER_INSTALL_OPTS=-U --no-dns            # your EC2 private IP
     ports:
       - "80:80"
       - "443:443"
