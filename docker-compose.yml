@@ -15,12 +15,13 @@ services:
     volumes:
       - freeipa-data:/data
       - /sys/fs/cgroup:/sys/fs/cgroup:rw
-      - /etc/ssl/certs:/etc/ssl/certs:ro  # ← FIX: Mount host CA certs (read-only)
+      # Only mount the single CA bundle file — not the whole directory
+      - /etc/ssl/certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
     sysctls:
       - net.ipv6.conf.lo.disable_ipv6=0
     environment:
       - PASSWORD=Admin@123
-      - REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt  # ← FIX: Point requests to Ubuntu's CA bundle
+      - REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
     ports:
       - "53:53/tcp"
       - "53:53/udp"
@@ -42,7 +43,7 @@ services:
       --setup-dns
       --no-forwarders
       --auto-reverse
-      --no-client  # Prevents previous client enrollment failure
+      --no-client
 
 volumes:
   freeipa-data:
