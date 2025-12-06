@@ -1,22 +1,23 @@
+version: "3.8"
+
 services:
   freeipa:
-    # Service definition start
     image: freeipa/freeipa-server:rocky-9
     container_name: freeipa-server
     restart: unless-stopped
     hostname: ipa.packops.local
-    privileged: true
+    # important for certs and Kerberos
+    privileged: true                  # required on Docker (not Podman)
     tmpfs:
       - /run:size=100m
       - /tmp:size=500m
     volumes:
-      # This line refers to the volume defined below
       - freeipa-data:/data
-      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro   # ro is fine now that host uses cgroup v1
     sysctls:
-      - net.ipv6.conf.lo.disable_ipv6=0
+      - net.ipv6.conf.lo.disable_ipv6=0    # prevents random hangs
     environment:
-      PASSWORD: Admin@123
+      - PASSWORD=Admin@123
     ports:
       - "53:53/tcp"
       - "53:53/udp"
@@ -30,12 +31,16 @@ services:
       - "464:464/udp"
       - "123:123/udp"
     command: >
-      -U --realm=PACKOPS.LOCAL --domain=packops.local
-      --unattended --no-ntp --setup-dns --no-forwarders --auto-reverse
-    # Service definition end
+      -U
+      --realm=PACKOPS.LOCAL
+      --domain=packops.local
+      --ds-password=${PASSWORD}
+      --admin-password=${PASSWORD}
+      --unattended
+      --no-ntp
+      --setup-dns
+      --no-forwarders
+      --auto-reverse
 
-# 🚨 ADD THIS SECTION HERE 🚨
 volumes:
   freeipa-data:
-    # You can optionally add a driver or external setting here, 
-    # but defining it by name is sufficient for a default local volume.
