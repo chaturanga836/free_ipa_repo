@@ -2,6 +2,7 @@ services:
   freeipa:
     image: freeipa/freeipa-server:rocky-9
     container_name: freeipa-server
+    restart: unless-stopped
     hostname: ipa.packops.local
     privileged: true
     tmpfs:
@@ -14,6 +15,8 @@ services:
     volumes:
       - freeipa-data:/data
       - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    sysctls:
+      - net.ipv6.conf.lo.disable_ipv6=0
     environment:
       - PASSWORD=Admin@123
     ports:
@@ -28,8 +31,20 @@ services:
       - "464:464"
       - "464:464/udp"
       - "123:123/udp"
-    # THIS IS THE ONLY LINE THAT MATTERS NOW
-    command: ["--no-client"]
+    # Bypass buggy entrypoint for first run: run installer directly
+    entrypoint: ["/usr/sbin/ipa-server-install"]
+    command:
+      - -U
+      - --realm=PACKOPS.LOCAL
+      - --domain=packops.local
+      - --admin-password=Admin@123
+      - --ds-password=Admin@123
+      - --unattended
+      - --no-ntp
+      - --setup-dns
+      - --no-forwarders
+      - --auto-reverse
+      - --no-cli  # Explicitly skip client config
 
 volumes:
   freeipa-data:
