@@ -6,16 +6,15 @@ services:
     container_name: freeipa-server
     restart: unless-stopped
     hostname: ipa.packops.local
-    # important for certs and Kerberos
-    privileged: true                  # required on Docker (not Podman)
+    privileged: true
     tmpfs:
       - /run:size=100m
       - /tmp:size=500m
     volumes:
       - freeipa-data:/data
-      - /sys/fs/cgroup:/sys/fs/cgroup:ro   # ro is fine now that host uses cgroup v1
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
     sysctls:
-      - net.ipv6.conf.lo.disable_ipv6=0    # prevents random hangs
+      - net.ipv6.conf.lo.disable_ipv6=0
     environment:
       - PASSWORD=Admin@123
     ports:
@@ -34,8 +33,6 @@ services:
       -U
       --realm=PACKOPS.LOCAL
       --domain=packops.local
-      --ds-password=Admin@123
-      --admin-password=Admin@123
       --unattended
       --no-ntp
       --setup-dns
