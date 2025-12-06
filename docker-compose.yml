@@ -13,7 +13,9 @@ services:
       - seccomp=unconfined                    # required when using cgroup v2
     volumes:
       - freeipa-data:/data
-      - /sys/fs/cgroup:/sys/fs/cgroup:rw      # rw is mandatory on cgroup v2
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw   
+    extra_hosts:
+      - "ipa.packops.local:172.18.0.2"   # rw is mandatory on cgroup v2
     sysctls:
       - net.ipv6.conf.lo.disable_ipv6=0
     environment:
