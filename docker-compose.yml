@@ -1,21 +1,21 @@
+# docker-compose.yml  ←  copy-paste this exactly
 services:
   freeipa:
-    image: freeipa/freeipa-server:almalinux-9  # From video—stable RHEL 9 clone
-    container_name: freeipa-server
-    hostname: ipa.packops.local  # From your original
-    read_only: true  # From video—for security (tmpfs auto-handles /run, /tmp)
-    privileged: true  # Required for systemd
+    image: freeipa/freeipa-server:almalinux-9          # exactly the one in the video
+    container_name: freeipa
+    hostname: ipa.packops.local                        # change only this line
+    read_only: true                                    # exactly like the video
+    tmpfs:
+      - /run
+      - /tmp                                           # Docker creates them automatically
     volumes:
-      - freeipa-data:/data:Z  # :Z for SELinux relabeling (video uses it)
-      - /sys/fs/cgroup:/sys/fs/cgroup:ro  # ro safe on your cgroup v1
-      - /etc/ssl/certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro  # Safety for SSL (your confirmed file)
+      - ipa-data:/data:Z                               # :Z is important for SELinux
     sysctls:
-      - net.ipv6.conf.all.disable_ipv6=0  # From video—broader IPv6 disable
+      - net.ipv6.conf.all.disable_ipv6=0               # exactly like the video
     environment:
-      - PASSWORD=Admin@123  # Sets admin/DS passwords
-      - IPA_SERVER_IP=172.31.6.95  # Your EC2 private IP (from video)
+      - PASSWORD=Admin@123
+      - IPA_SERVER_IP=172.31.6.95                      # ← YOUR EC2 EC2 private IP
     ports:
-      # From video (matches yours)
       - "53:53/tcp"
       - "53:53/udp"
       - "80:80"
@@ -27,7 +27,7 @@ services:
       - "464:464/tcp"
       - "464:464/udp"
       - "123:123/udp"
-    restart: always  # From video
+    restart: unless-stopped
 
 volumes:
-  freeipa-data:  # Named volume (auto-created, as in video)
+  ipa-data:
