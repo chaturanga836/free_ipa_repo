@@ -1,24 +1,25 @@
-version: "3.8"
-
 services:
   freeipa:
     image: freeipa/freeipa-server:rocky-9
     container_name: freeipa-server
-    restart: unless-stopped
     hostname: ipa.packops.local
-    privileged: true
+    privileged: true                          # mandatory on Docker
     tmpfs:
       - /run:size=100m
       - /tmp:size=500m
+    cap_add:
+      - SYS_ADMIN                             # required when using cgroup v2
+    security_opt:
+      - seccomp=unconfined                    # required when using cgroup v2
     volumes:
       - freeipa-data:/data
-      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw      # rw is mandatory on cgroup v2
     sysctls:
       - net.ipv6.conf.lo.disable_ipv6=0
     environment:
       - PASSWORD=Admin@123
     ports:
-      - "53:53/tcp"
+      - "53:53"
       - "53:53/udp"
       - "80:80"
       - "443:443"
