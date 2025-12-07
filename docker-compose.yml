@@ -2,7 +2,7 @@ services:
   freeipa:
     image: freeipa/freeipa-server:almalinux-9
     container_name: freeipa
-    hostname: ipa.packops.local
+    hostname: ec2-65-0-150-75.ap-south-1.compute.amazonaws.com
     read_only: true
     tmpfs:
       - /run
